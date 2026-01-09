@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Supplier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Main Application Container -->
+    <div class="min-h-screen flex flex-col">
+
+        <!-- Top Navigation Bar -->
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center space-x-4">
+                        <svg class="h-8 w-8 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7V17L12 22L22 17V7L12 2ZM12 4.49997L20 8.99997V15L12 19.5001L4 15V8.99997L12 4.49997ZM12 11.5L17 8.5L12 5.5L7 8.5L12 11.5ZM12 13.5L17 10.5L17 16.5L12 19.5L7 16.5L7 10.5L12 13.5Z" />
+                        </svg>
+                        <h1 class="text-2xl font-bold text-gray-800">Inventory Hub</h1>
+                    </div>
+                    <nav class="hidden md:flex space-x-6 text-gray-600 font-medium">
+                        <a href="{% url 'home' %}" class="hover:text-indigo-600 transition-colors duration-200">Dashboard</a>
+                        <a href="{% url 'pdlist' 0 %}" class="hover:text-indigo-600 transition-colors duration-200">Products</a>
+                        <a href="{% url 'odlist' %}" class="hover:text-indigo-600 transition-colors duration-200">Orders</a>
+                        <a href="{% url 'splist' %}" class="text-indigo-600 border-b-2 border-indigo-600 pb-1">Suppliers</a>
+                        <a href="{% url 'cmlist' 0%}" class="hover:text-indigo-600 transition-colors duration-200">Customers</a>
+                        <a href="{% url 'logout' %}" class="hover:text-indigo-600 transition-colors duration-200">Logout</a>
+
+                        
+                    </nav>
+                    <div class="md:hidden flex items-center">
+                        <button id="menu-button" class="p-2 rounded-md text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden bg-white shadow-md">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="{% url 'home' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Dashboard</a>
+                    <a href="{% url 'pdlist' 0 %}" class="block px-3 py-2 rounded-md text-base font-medium  text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Products</a>
+                    <a href="{% url 'odlist' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Orders</a>
+                    <a href="{% url 'splist' %}" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-600 bg-gray-50">Suppliers</a>
+                    <a href="{% url 'cmlist' 0%}" class="block px-3 py-2 rounded-md text-base font-medium  text-gray-700 hover:text-indigo-600 hover:bg-gray-50"">Customers</a>
+                    <a href="{% url 'logout' %}" class="block px-3 py-2 rounded-md text-base font-medium  text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Logout</a>
+                        
+                   
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow max-w-xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="px-4 py-6 sm:px-0">
+                <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                    <div class="p-4 bg-red-50 border-l-4 border-red-400 rounded-lg text-red-700 mb-6" role="alert">
+                        <p class="font-bold text-lg mb-2">Are you sure?</p>
+                        <p class="text-sm">This action cannot be undone. This will permanently delete the supplier <strong class="font-semibold">"{{context.name}}"</strong> and all its associated data.</p>
+                    </div>
+                    
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Confirm Deletion</h2>
+                    
+                    <div class="flex justify-center space-x-3">
+                        <a href="{% url 'splist' %}" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-full shadow-md hover:bg-gray-300 transition-colors duration-200">
+                            Cancel
+                        </a>
+                        <form action="{% url 'splist' context.pk %}" method="POST">
+                            {% csrf_token %}                         
+                             <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-red-600 transition-colors duration-200">
+                                Yes, Delete Supplier
+                             </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white shadow-sm mt-8">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-sm">
+                &copy; 2025 Inventory Hub. All rights reserved.
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        const menuButton = document.getElementById('menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

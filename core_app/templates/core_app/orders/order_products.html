@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create/Edit Order</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Main Application Container -->
+    <div class="min-h-screen flex flex-col">
+
+        <!-- Top Navigation Bar -->
+        <header class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center space-x-4">
+                        <svg class="h-8 w-8 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7V17L12 22L22 17V7L12 2ZM12 4.49997L20 8.99997V15L12 19.5001L4 15V8.99997L12 4.49997ZM12 11.5L17 8.5L12 5.5L7 8.5L12 11.5ZM12 13.5L17 10.5L17 16.5L12 19.5L7 16.5L7 10.5L12 13.5Z" />
+                        </svg>
+                        <h1 class="text-2xl font-bold text-gray-800">Inventory Hub</h1>
+                    </div>
+                    <nav class="hidden md:flex space-x-6 text-gray-600 font-medium">
+                        <a href="{% url 'home' %}" class="hover:text-indigo-600 transition-colors duration-200">Dashboard</a>
+                        <a href="{% url 'pdlist' 0 %}" class="hover:text-indigo-600 transition-colors duration-200">Products</a>
+                        <a href="{% url 'odlist' %}" class="text-indigo-600 border-b-2 border-indigo-600 pb-1">Orders</a>
+                        <a href="{% url 'splist' %}" class="hover:text-indigo-600 transition-colors duration-200">Suppliers</a>
+                        <a href="{% url 'cmlist' 0 %}" class="hover:text-indigo-600 transition-colors duration-200">Customers</a>
+                        <a href="{% url 'logout' %}" class="hover:text-indigo-600 transition-colors duration-200">Logout</a>
+
+                    </nav>
+                    <div class="md:hidden flex items-center">
+                        <button id="menu-button" class="p-2 rounded-md text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden bg-white shadow-md">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="{% url 'home' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Dashboard</a>
+                    <a href="{% url 'pdlist' 0 %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Products</a>
+                    <a href="{% url 'odlist' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Orders</a>
+                    <a href="{% url 'splist' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Suppliers</a>
+                    <a href="{% url 'cmlist' 0 %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Customers</a>
+                    <a href="{% url 'logout' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Logout</a>
+
+                </div>
+            </div>
+        </header>
+    <h3 class="text-lg font-semibold mb-2">Order Items</h3>
+
+<!-- Order Table -->
+<table class="w-full text-left border-collapse mt-2">
+  <thead>
+    <tr class="border-b">
+      <th class="py-2">PRODUCT</th>
+      <th class="py-2">QUANTITY</th>
+      <th class="py-2">PRICE</th>
+      <th class="py-2">ACTION</th>
+    </tr>
+  </thead>
+  <tbody id="order-items"></tbody>
+</table>
+
+<!-- Add Item Button -->
+<button type="button" id="openModal" class="mt-4 px-4 py-2 bg-gray-200 rounded">Add Item</button>
+
+<!-- Modal -->
+<div id="productModal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+    <h2 class="text-xl font-semibold mb-3">Select Product</h2>
+    <select id="productSelect" class="border p-2 w-full rounded mb-3">
+      <option value=" ">-- Choose a product --</option>
+      {% for product in prodlist %}
+      <option value="{{ product.product_id }}" data-name="{{ product.name }}" data-price="{{ product.price }}">
+        {{ product.name }} — ₹{{ product.price }}
+      </option>
+      {% endfor %}
+    </select>
+
+    <input type="number" id="quantity" class="border p-2 w-full rounded mb-3" min="1" value="1">
+    <div class="flex justify-end gap-2">
+      <button id="closeModal" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+      <button id="addProduct" class="px-4 py-2 bg-blue-600 text-white rounded">Add</button>
+    </div>
+  </div>
+</div>
+<script>
+const modal = document.getElementById("productModal");
+const openModal = document.getElementById("openModal");
+const closeModal = document.getElementById("closeModal");
+const addProduct = document.getElementById("addProduct");
+const tableBody = document.getElementById("order-items");
+
+openModal.onclick = () => modal.classList.remove("hidden");
+closeModal.onclick = () => modal.classList.add("hidden");
+
+addProduct.onclick = () => {
+  const select = document.getElementById("productSelect");
+  const quantity = parseInt(document.getElementById("quantity").value);
+  const productName = select.selectedOptions[0].dataset.name;
+  const price = parseFloat(select.selectedOptions[0].dataset.price);
+
+  if (!select.value) {
+    alert("Please select a product!");
+    return;
+  }
+
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td class="py-2">${productName}</td>
+    <td class="py-2">${quantity}</td>
+    <td class="py-2">₹${(price * quantity).toFixed(2)}</td>
+    <td class="py-2 text-red-600 cursor-pointer" onclick="this.closest('tr').remove()">Remove</td>
+  `;
+  tableBody.appendChild(row);
+
+  modal.classList.add("hidden");
+};
+ </script>
+</body>
+</html>

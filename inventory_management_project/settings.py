@@ -15,7 +15,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['inventory-management-system-llfd.onrender.com',
+    'localhost',
+    '127.0.0.1',]
 
 
 # Application definition
@@ -124,6 +126,7 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Auth_USER_MODEL = "core_app.Customuser"
+
 
 
 

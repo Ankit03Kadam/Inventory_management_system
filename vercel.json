@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "inventory_management_project/wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "inventory_management_project/wsgi.py"
+    }
+  ]
+}
